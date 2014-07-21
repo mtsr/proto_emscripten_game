@@ -29,30 +29,26 @@ project (${APP_NAME})
 # 	set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
 
 # 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-# 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # endif()
 
 if(EMSCRIPTEN)
 else(EMSCRIPTEN)
-option(GLFW_BUILD_EXAMPLES OFF)
-option(GLFW_BUILD_TESTS OFF)
-option(GLFW_BUILD_DOCS OFF)
-option(GLFW_INSTALL OFF)
-add_subdirectory(glfw-3.0.4)
-include_directories(glfw-3.0.4/include)
+add_subdirectory(SDL2-2.0.3)
+include_directories(include)
 endif()
 
 if(EMSCRIPTEN)
 set(GAME_SRC
   src/main.cpp
-  src/main.h
+  # src/main.h
   # Classes/AppDelegate.cpp
   # Classes/HelloWorldScene.cpp
 )
 elseif( UNIX ) #assume linux
 set(GAME_SRC
   src/main.cpp
-  src/main.h
+  # src/main.h
   # Classes/AppDelegate.cpp
   # Classes/HelloWorldScene.cpp
 )
@@ -63,25 +59,6 @@ set(GAME_SRC
   proj.win32/resource.h
   Classes/AppDelegate.cpp
   Classes/HelloWorldScene.cpp
-)
-endif()
-
-MESSAGE(STATUS, "CMAKE_SYSTEM_INCLUDE_PATH = ${CMAKE_SYSTEM_INCLUDE_PATH}")
-
-if(EMSCRIPTEN)
-include_directories(
-)
-link_directories(
-)
-elseif(UNIX) #assumed linux
-include_directories(
-)
-link_directories(
-)
-elseif (WIN32)
-include_directories(
-)
-link_directories(
 )
 endif()
 
@@ -101,7 +78,7 @@ endif()
 if(EMSCRIPTEN)
 else(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
-	glfw ${GLFW_LIBRARIES}
+	SDL2 ${SDL2_LIBRARIES}
 )
 endif()
 

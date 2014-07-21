@@ -1,95 +1,48 @@
 #include <stdlib.h>
-#include <string>
 #include <iostream>
 
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#include <GL/glfw.h>
+#include <emscripten.h>
 #else
-#include <GLFW/glfw.h>
 #endif
 
-#include "main.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengles2.h>
 
-int main(int argc, const char * argv[])
-{
-    const GLint WIDTH = 640;
-    const GLint HEIGHT = 480;
+SDL_Window* window;
+#ifndef EMSCRIPTEN
+bool done;
+#endif
+
+void update() {
+    SDL_Event windowEvent;
     
-    // Set GLFW error callback before glfwInit
-    glfwSetErrorCallback(glfw_error_callback);
-
-    // Initialise GLFW
-    if( !glfwInit() )
+    if (SDL_PollEvent(&windowEvent))
     {
-        std::cout << "Failed to initialize GLFW" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // ensure newest opengl on mac os x
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    
-    GLFWwindow* window;
-    if (false) { // fullscreen
-        GLFWmonitor* mon = glfwGetPrimaryMonitor();
-        const GLFWvidmode* vmode = glfwGetVideoMode(mon);
-        window = glfwCreateWindow(vmode->width, vmode->height, "Extended GL Init", mon, NULL);
-    } else {
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Extended GL Init", NULL, NULL);
+        if (windowEvent.type == SDL_QUIT) done = true;
     }
     
-    if (!window)
-    {
-        glfwTerminate();
-        std::cout << "Failed to create window" << std::endl;
-        exit(EXIT_FAILURE);
+    SDL_GL_SwapWindow(window);
+}
+
+int main(int argc, char *argv[]) {
+    SDL_Init(SDL_INIT_VIDEO);
+    
+    window = SDL_CreateWindow("OpenGL", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
+    
+    SDL_GLContext context = SDL_GL_CreateContext(window);
+    
+#ifdef EMSCRIPTEN
+    emscripten_set_mainloop(update, 0, 1);
+#else
+    done = false;
+    while (!done) {
+        update();
     }
+#endif
     
-    glfwMakeContextCurrent(window);
+    SDL_GL_DeleteContext(context);
+    SDL_Quit();
     
-    glfwSetWindowCloseCallback(window, glfw_windowClose_callback);
-    glfwSetKeyCallback(window, glfw_key_callback);
-
-    // get version info
-    const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-    const GLubyte* version = glGetString(GL_VERSION); // version as a string
-    std::cout << "Renderer: " << renderer << std::endl;
-    std::cout << "OpenGL version supported " << version << std::endl;
-    
-    glfwSetWindowSizeCallback(window, glfw_windowSize_callback);
-
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-	}
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    
-    return EXIT_SUCCESS;
-}
-
-static void glfw_error_callback(int error, const char* description)
-{
-    std::cerr << description << std::endl;
-}
-
-static void glfw_windowClose_callback(GLFWwindow* window) {
-    std::cout << "Window closing" << std::endl;
-}
-
-static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-}
-
-static void glfw_windowSize_callback (GLFWwindow* window, int width, int height) {
-    /* update any perspective matrices used here */
+    return 0;
 }
