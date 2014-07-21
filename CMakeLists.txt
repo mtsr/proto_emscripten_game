@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 
-if( EMSCRIPTEN )
+OPTION(EMSCRIPTEN "build for emscripten" OFF)
+
+if(EMSCRIPTEN)
 	set(APP_NAME CrossPlatform.html)
 else()
 	set(APP_NAME CrossPlatform)
 endif()
-project (${APP_NAME}.bc)
+project (${APP_NAME})
 
 # option(DEBUG_MODE "" ON)
 
@@ -30,9 +32,27 @@ project (${APP_NAME}.bc)
 # 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # endif()
 
-if( UNIX ) #assume linux
+if(EMSCRIPTEN)
+else(EMSCRIPTEN)
+option(GLFW_BUILD_EXAMPLES OFF)
+option(GLFW_BUILD_TESTS OFF)
+option(GLFW_BUILD_DOCS OFF)
+option(GLFW_INSTALL OFF)
+add_subdirectory(glfw-3.0.4)
+include_directories(glfw-3.0.4/include)
+endif()
+
+if(EMSCRIPTEN)
 set(GAME_SRC
-  proj.emscripten/main.cpp
+  src/main.cpp
+  src/main.h
+  # Classes/AppDelegate.cpp
+  # Classes/HelloWorldScene.cpp
+)
+elseif( UNIX ) #assume linux
+set(GAME_SRC
+  src/main.cpp
+  src/main.h
   # Classes/AppDelegate.cpp
   # Classes/HelloWorldScene.cpp
 )
@@ -46,17 +66,24 @@ set(GAME_SRC
 )
 endif()
 
-# if (WIN32)
-# include_directories(
-# )
-# link_directories(
-# )
-# elseif(UNIX) #assumed linux
-# include_directories(
-# )
-# link_directories(
-# )
-# endif()
+MESSAGE(STATUS, "CMAKE_SYSTEM_INCLUDE_PATH = ${CMAKE_SYSTEM_INCLUDE_PATH}")
+
+if(EMSCRIPTEN)
+include_directories(
+)
+link_directories(
+)
+elseif(UNIX) #assumed linux
+include_directories(
+)
+link_directories(
+)
+elseif (WIN32)
+include_directories(
+)
+link_directories(
+)
+endif()
 
 if ( WIN32 )
 	# add the executable
@@ -71,8 +98,12 @@ else()
 	)
 endif()
 
-# target_link_libraries(${APP_NAME}
-# )
+if(EMSCRIPTEN)
+else(EMSCRIPTEN)
+target_link_libraries(${APP_NAME}
+	glfw ${GLFW_LIBRARIES}
+)
+endif()
 
 set(APP_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
