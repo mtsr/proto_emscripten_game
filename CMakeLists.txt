@@ -2,20 +2,16 @@ cmake_minimum_required(VERSION 2.6)
 
 OPTION(EMSCRIPTEN "build for emscripten" OFF)
 
-if(EMSCRIPTEN)
-	set(APP_NAME CrossPlatform.html)
-else()
-	set(APP_NAME CrossPlatform)
-endif()
+set(APP_NAME CrossPlatform)
 project (${APP_NAME})
 
-# option(DEBUG_MODE "" ON)
+option(DEBUG_MODE "" ON)
 
-# if(DEBUG_MODE)
-#   set(CMAKE_BUILD_TYPE DEBUG)
-# else(DEBUG_MODE)
-#   set(CMAKE_BUILD_TYPE RELEASE)
-# endif(DEBUG_MODE)
+if(DEBUG_MODE)
+  set(CMAKE_BUILD_TYPE DEBUG)
+else(DEBUG_MODE)
+  set(CMAKE_BUILD_TYPE RELEASE)
+endif(DEBUG_MODE)
 
 # if (MSVC)
 # #	set(CMAKE_C_FLAGS_DEBUG "-DCOCOS2D_DEBUG=1")
@@ -32,10 +28,17 @@ project (${APP_NAME})
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # endif()
 
+# add_subdirectory(SDL)
 if(EMSCRIPTEN)
+include_directories(
+	SDL/include/
+	SDL/build.emscripten/include
+	include/
+)
 else(EMSCRIPTEN)
-add_subdirectory(SDL2-2.0.3)
-include_directories(include)
+include_directories(
+	include/
+)
 endif()
 
 if(EMSCRIPTEN)
@@ -75,12 +78,19 @@ else()
 	)
 endif()
 
-if(EMSCRIPTEN)
-else(EMSCRIPTEN)
+IF(EMSCRIPTEN)
+set(CMAKE_EXECUTABLE_SUFFIX ".html")
+ENDIF()
+
+IF(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
-	SDL2 ${SDL2_LIBRARIES}
+	/Users/jonasmatser/Development/SDL-emscripten/build.emscripten/build/.libs/libSDL2.a
 )
-endif()
+ELSE(EMSCRIPTEN)
+target_link_libraries(${APP_NAME}
+	/Users/jonasmatser/Development/SDL-emscripten/build/.libs/libSDL2.dylib
+)
+ENDIF()
 
 set(APP_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
