@@ -1,9 +1,15 @@
-cmake_minimum_required(VERSION 2.6)
-
-OPTION(EMSCRIPTEN "build for emscripten" OFF)
-
 set(APP_NAME CrossPlatform)
 project (${APP_NAME})
+
+cmake_minimum_required(VERSION 2.6)
+
+if(EMSCRIPTEN)
+else(EMSCRIPTEN)
+include(FindGLEW)
+MESSAGE("${GLEW_LIBRARY} / ${GLEW_INCLUDE_PATH}")
+endif()
+
+OPTION(EMSCRIPTEN "build for emscripten" OFF)
 
 option(DEBUG_MODE "" ON)
 
@@ -89,6 +95,7 @@ target_link_libraries(${APP_NAME}
 ELSE(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build/.libs/libSDL2.dylib
+	${GLEW_LIBRARY}
 )
 ENDIF()
 
