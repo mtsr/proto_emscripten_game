@@ -3,14 +3,17 @@
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
-// Because of conflict with glew
-#define NO_SDL_GLEXT
 #else
 #endif
 
+// Because of conflict with glew
+#define NO_SDL_GLEXT
+
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_opengles2.h>
+
+#include <entityx/entityx.h>
+#include <glm/glm.hpp>
 
 SDL_Window* window;
 

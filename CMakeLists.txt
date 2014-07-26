@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 2.6)
 if(EMSCRIPTEN)
 else(EMSCRIPTEN)
 include(FindGLEW)
-MESSAGE("${GLEW_LIBRARY} / ${GLEW_INCLUDE_PATH}")
 endif()
 
 OPTION(EMSCRIPTEN "build for emscripten" OFF)
@@ -34,7 +33,12 @@ endif(DEBUG_MODE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # endif()
 
-# add_subdirectory(SDL)
+if(EMSCRIPTEN)
+	SET(CROSS_COMPILING "" ON)
+endif()
+
+add_subdirectory(entityx)
+
 if(EMSCRIPTEN)
 include_directories(
 	SDL/include/
@@ -91,11 +95,13 @@ ENDIF()
 IF(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build.emscripten/build/.libs/libSDL2.a
+	# ${CMAKE_CURRENT_SOURCE_DIR}/lib/libentityx.a
 )
 ELSE(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build/.libs/libSDL2.dylib
 	${GLEW_LIBRARY}
+	# ${CMAKE_CURRENT_SOURCE_DIR}/lib/libentityx.a
 )
 ENDIF()
 
