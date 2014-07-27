@@ -10,7 +10,9 @@
 
 #include <iostream>
 
-WindowSystem::WindowSystem() {
+void WindowSystem::configure(entityx::EventManager &event_manager) {
+    event_manager.subscribe<ResizeEvent>(*this);
+
     int n = SDL_GetNumVideoDrivers();
     if (n == 0) {
         std::cout << "No built-in video drivers" << std::endl;
@@ -69,15 +71,7 @@ WindowSystem::WindowSystem() {
     const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
     const GLubyte* version = glGetString(GL_VERSION); // version as a string
     std::cout << "Renderer: " << renderer << std::endl;
-    std::cout << "OpenGL version supported " << version << std::endl;
-}
-
-WindowSystem::~WindowSystem() {
-    SDL_GL_DeleteContext(context);
-}
-
-void WindowSystem::configure(entityx::EventManager &event_manager) {
-}
+    std::cout << "OpenGL version supported " << version << std::endl;}
 
 void WindowSystem::updateFPSCounter(SDL_Window* window, double delta) {
     accumulator += delta;
@@ -95,4 +89,8 @@ void WindowSystem::updateFPSCounter(SDL_Window* window, double delta) {
 void WindowSystem::update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
     updateFPSCounter(window, dt);
     SDL_GL_SwapWindow(window);
+}
+
+void WindowSystem::receive(const ResizeEvent &resizeEvent) {
+    
 }

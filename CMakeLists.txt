@@ -68,6 +68,12 @@ set(GAME_SRC ${GAME_SRC}
   src/App.h
   src/systems/WindowSystem.cpp
   src/systems/WindowSystem.h
+  src/systems/RenderSystem.cpp
+  src/systems/RenderSystem.h
+  src/systems/EventSystem.cpp
+  src/systems/EventSystem.h
+  src/events/ResizeEvent.h
+  src/events/QuitEvent.h
 )
 
 if ( WIN32 )

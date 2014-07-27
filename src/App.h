@@ -16,14 +16,17 @@
 #include <SDL/SDL_opengles2.h>
 #else
 // Because of conflict with glew
-#define NO_SDL_GLEXT
+//#define NO_SDL_GLEXT
 //#include <GL/glew.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 #endif
 
 #include <entityx/entityx.h>
 
-class App {
+#include "events/QuitEvent.h"
+
+class App : public entityx::Receiver<App> {
     entityx::EventManager events;
     entityx::EntityManager entities;
     entityx::SystemManager systems;
@@ -41,7 +44,7 @@ public:
 #endif
     
     App() : events(), entities(events), systems(entities, events) {
-        
+        events.subscribe<QuitEvent>(*this);
     }
     
     ~App() {
@@ -50,6 +53,8 @@ public:
     
     void update();
     void init();
+    
+    void receive(const QuitEvent &quitEvent);
 };
 
 #endif /* defined(__CrossPlatform__App__) */
