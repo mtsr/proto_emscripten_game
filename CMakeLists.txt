@@ -56,27 +56,19 @@ endif()
 
 if(EMSCRIPTEN)
 set(GAME_SRC
-  src/main.cpp
-  # src/main.h
-  # Classes/AppDelegate.cpp
-  # Classes/HelloWorldScene.cpp
 )
 elseif( UNIX ) #assume linux
 set(GAME_SRC
-  src/main.cpp
-  # src/main.h
-  # Classes/AppDelegate.cpp
-  # Classes/HelloWorldScene.cpp
-)
-elseif ( WIN32 )
-set(GAME_SRC
-  proj.win32/main.cpp
-  proj.win32/main.h
-  proj.win32/resource.h
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
 )
 endif()
+
+set(GAME_SRC ${GAME_SRC}
+  src/main.cpp
+  src/App.cpp
+  src/App.h
+  src/systems/WindowSystem.cpp
+  src/systems/WindowSystem.h
+)
 
 if ( WIN32 )
 	# add the executable
@@ -98,12 +90,14 @@ ENDIF()
 IF(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build.emscripten/build/.libs/libSDL2.a
+	entityx
 )
 ELSE(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build/.libs/libSDL2.dylib
 	# ${GLEW_LIBRARY}
 	${OPENGL_LIBRARIES}
+	entityx
 )
 ENDIF()
 
