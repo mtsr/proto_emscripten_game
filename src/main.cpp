@@ -6,11 +6,16 @@
 #else
 #endif
 
+#ifdef EMSCRIPTEN
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengles2.h>
+#else
 // Because of conflict with glew
 #define NO_SDL_GLEXT
-
 #include <GL/glew.h>
+
 #include <SDL/SDL.h>
+#endif
 
 #include <entityx/entityx.h>
 #include <glm/glm.hpp>
@@ -23,7 +28,25 @@ int start_time = 0;
 bool done;
 #endif
 
+void updateFPSCounter(SDL_Window* window) {
+    static int previous_ms = SDL_GetTicks();
+    static int frame_count;
+    int current_ms = SDL_GetTicks();
+    int elapsed_ms = current_ms - previous_ms;
+    if (elapsed_ms > 250) {
+        previous_ms = current_ms;
+        double fps = (double)frame_count / elapsed_ms * 1000;
+        char tmp[128];
+        sprintf(tmp, "opengl @ fps: %.2lf", fps);
+        SDL_SetWindowTitle(window, tmp);
+        frame_count = 0;
+    }
+    frame_count++;
+}
+
 void update() {
+    updateFPSCounter(window);
+    
     SDL_Event windowEvent;
     
     if (SDL_PollEvent(&windowEvent))
@@ -68,6 +91,18 @@ int main(int argc, char *argv[]) {
 
     start_time = SDL_GetTicks();
     
+#ifdef EMSCRIPTEN
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+    
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    
     window = SDL_CreateWindow(
     	"Crossplatform",
 #ifdef EMSCRIPTEN
@@ -89,6 +124,12 @@ int main(int argc, char *argv[]) {
     	std::cout << "Context could not be created! SDL_Error:" << SDL_GetError() << std::endl;
     	return 1;
     }
+    
+    // get version info
+    const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
+    const GLubyte* version = glGetString(GL_VERSION); // version as a string
+    std::cout << "Renderer: " << renderer << std::endl;
+    std::cout << "OpenGL version supported " << version << std::endl;
     
 #ifdef EMSCRIPTEN
     emscripten_set_main_loop(update, 0, 1);
