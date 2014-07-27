@@ -23,29 +23,34 @@
 SDL_Window* window;
 
 int start_time = 0;
+int accumulator_ms = 0;
 
 #ifndef EMSCRIPTEN
 bool done;
 #endif
 
-void updateFPSCounter(SDL_Window* window) {
-    static int previous_ms = SDL_GetTicks();
+
+void updateFPSCounter(SDL_Window* window, int delta_ms) {
     static int frame_count;
-    int current_ms = SDL_GetTicks();
-    int elapsed_ms = current_ms - previous_ms;
-    if (elapsed_ms > 250) {
-        previous_ms = current_ms;
-        double fps = (double)frame_count / elapsed_ms * 1000;
+    accumulator_ms += delta_ms;
+    if (accumulator_ms > 250) {
+        double fps = (double)frame_count / accumulator_ms * 1000;
         char tmp[128];
         sprintf(tmp, "opengl @ fps: %.2lf", fps);
         SDL_SetWindowTitle(window, tmp);
         frame_count = 0;
+        accumulator_ms = 0;
     }
     frame_count++;
 }
 
 void update() {
-    updateFPSCounter(window);
+    static int previous_ms = SDL_GetTicks();
+    int current_ms = SDL_GetTicks();
+    int delta_ms = current_ms - previous_ms;
+    previous_ms = current_ms;
+
+    updateFPSCounter(window, delta_ms);
     
     SDL_Event windowEvent;
     
