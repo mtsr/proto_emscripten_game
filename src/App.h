@@ -51,8 +51,9 @@ public:
         SDL_Quit();
     }
     
-    void update();
     void init();
+    void run();
+    void update();
     
     void receive(const QuitEvent &quitEvent);
 };
