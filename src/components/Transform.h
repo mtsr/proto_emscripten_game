@@ -9,6 +9,10 @@
 #ifndef __CrossPlatform__Transform__
 #define __CrossPlatform__Transform__
 
-#include <iostream>
+#include <glm/glm.hpp>
+
+struct Transform : public entityx::Component<Transform> {
+    glm::mat4 transform;
+};
 
 #endif /* defined(__CrossPlatform__Transform__) */

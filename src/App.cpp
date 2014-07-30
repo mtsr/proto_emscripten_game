@@ -15,11 +15,13 @@
 #else
 #endif
 
-#include <glm/glm.hpp>
-
 #include "systems/WindowSystem.h"
 #include "systems/EventSystem.h"
 #include "systems/RenderSystem.h"
+
+#include "components/Transform.h"
+#include "components/Camera.h"
+#include "components/Sprite.h"
 
 void App::init() {
     if (SDL_Init(0) != 0) {
@@ -44,6 +46,14 @@ static void static_update() {
 #endif
 
 void App::run() {
+    entityx::Entity first = entities.create();
+    first.assign<Sprite>();
+    first.assign<Transform>();
+    
+    entityx::Entity camera = entities.create();
+    camera.assign<Camera>();
+    camera.component<Camera>()->mPosition = glm::vec3(0.f, 0.f, -10.f);
+    
 #ifdef EMSCRIPTEN
     app = this;
     emscripten_set_main_loop(static_update, 0, 1);

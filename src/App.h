@@ -24,6 +24,8 @@
 
 #include <entityx/entityx.h>
 
+#include <glm/glm.hpp>
+
 #include "events/QuitEvent.h"
 
 class App : public entityx::Receiver<App> {
