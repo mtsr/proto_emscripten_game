@@ -62,18 +62,43 @@ set(GAME_SRC
 )
 endif()
 
-set(GAME_SRC ${GAME_SRC}
-  src/main.cpp
-  src/App.cpp
-  src/App.h
+set(components
+  src/components/Body.h
+  src/components/Camera.h
+  src/components/Sprite.h
+  src/components/Transform.h
+)
+source_group(src\\components FILES ${components})
+
+set(events
+  src/events/ResizeEvent.h
+  src/events/QuitEvent.h
+)
+source_group(src\\events FILES ${events})
+
+set(systems
   src/systems/WindowSystem.cpp
   src/systems/WindowSystem.h
   src/systems/RenderSystem.cpp
   src/systems/RenderSystem.h
   src/systems/EventSystem.cpp
   src/systems/EventSystem.h
-  src/events/ResizeEvent.h
-  src/events/QuitEvent.h
+)
+source_group(src\\systems FILES ${systems})
+
+set(src
+  src/main.cpp
+  src/App.cpp
+  src/App.h
+)
+source_group(src FILES ${src})
+
+set(GAME_SRC
+	${GAME_SRC}
+	${src}
+	${components}
+	${events}
+	${systems}
 )
 
 if ( WIN32 )

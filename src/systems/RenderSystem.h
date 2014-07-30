@@ -25,7 +25,13 @@
 #include "../events/ResizeEvent.h"
 
 class RenderSystem : public entityx::System<RenderSystem>, public entityx::Receiver<RenderSystem> {
+    
+    GLint width, height;
+    bool resized = true;
 public:
+    RenderSystem();
+    ~RenderSystem() {};
+    
     void configure(entityx::EventManager &event_manager);
     void update(entityx::EntityManager &es, entityx::EventManager &events, double dt) override;
     

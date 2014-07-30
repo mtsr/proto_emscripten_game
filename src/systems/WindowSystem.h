@@ -34,7 +34,7 @@ class WindowSystem : public entityx::System<WindowSystem>, public entityx::Recei
     void updateFPSCounter(SDL_Window* window, double delta);
 
 public:
-    WindowSystem() : context(NULL) {};
+    WindowSystem();
     ~WindowSystem() {
         if (context != NULL) {
             SDL_GL_DeleteContext(context);

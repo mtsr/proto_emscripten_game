@@ -10,6 +10,7 @@
 #include "../events/QuitEvent.h"
 
 void EventSystem::configure(entityx::EventManager &event_manager) {
+    std::cout << "Configuring EventSystem" << std::endl;
 }
 
 void EventSystem::update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
