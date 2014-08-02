@@ -49,13 +49,15 @@ void App::run() {
     entityx::Entity first = entities.create();
     first.assign<Sprite>();
     first.assign<Transform>();
-    first.component<Transform>()->scale(glm::vec3(10.f, 10.f, 1.f));
+//    first.component<Transform>()->translate(glm::vec3(1.f, 1.f, 0.f));
+//    first.component<Transform>()->scale(glm::vec3(1.f, 1.f, 1.f));
     
     camera = entities.create();
     camera.assign<Camera>();
-    camera.component<Camera>()->mPosition = glm::vec3(0.f, 0.f, -10.f);
-    camera.component<Camera>()->mUp = glm::vec3(0.f, 1.f, 0.f);
-    camera.component<Camera>()->mLookAt = glm::vec3(0.f, 0.f, 0.f);
+    camera.component<Camera>()->setClip(0.1f, 100.f);
+    camera.component<Camera>()->setPosition(glm::vec3(0.f, 0.f, -10.f));
+    camera.component<Camera>()->setUp(glm::vec3(0.f, 1.f, 0.f));
+    camera.component<Camera>()->setLookAt(glm::vec3(0.f, 0.f, 0.f));
     
 #ifdef EMSCRIPTEN
     app = this;

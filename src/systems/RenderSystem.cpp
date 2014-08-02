@@ -67,13 +67,29 @@ void print_error() {
     }
 }
 
+#include <glm/gtx/string_cast.hpp>
+
+std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {
+    out << glm::to_string(vec);
+    return out;
+}
+
+std::ostream &operator<< (std::ostream &out, const glm::vec4 &vec) {
+    out << glm::to_string(vec);
+    return out;
+}
+
+std::ostream &operator<< (std::ostream &out, const glm::mat4 &mat) {
+    out << glm::to_string(mat);
+    return out;
+}
+
 void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &events, double dt) {
     
     entityx::ComponentHandle<Camera> camera;
     for (entityx::Entity entity : es.entities_with_components(camera)) {
         if (resized) {
-            camera->mWidth = width;
-            camera->mHeight = height;
+            camera->setWindow(-5.f, 5.f, -5.f, 5.f);
             resized = false;
         }
         glClearColor(.0f, .0f, .0f, .0f);
@@ -88,8 +104,6 @@ void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &eve
         entityx::ComponentHandle<Sprite> sprite;
         entityx::ComponentHandle<Transform> transform;
         for (entityx::Entity entity : es.entities_with_components(sprite, transform)) {
-            // TODO remove
-            transform->rotate(dt * 10, glm::vec3(0.f, 1.f, 0.f));
             if (!Sprite::initialized) {
                 GLfloat points[] = {
                     -0.5f,  0.5f,  0.0f,
@@ -125,22 +139,22 @@ void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &eve
                     exit(1);
                 }
                 
-//                const char* uniform_name;
-//                uniform_name = "modelview";
-//                Sprite::uniform_modelview = glGetUniformLocation(Sprite::shaderProgram, uniform_name);
-//                print_error();
-//                if (Sprite::uniform_modelview == -1) {
-//                    std::cout << "Could not bind uniform " << uniform_name << std::endl;
-//                    exit(1);
-//                }
-//                
-//                uniform_name = "projection";
-//                Sprite::uniform_projection = glGetUniformLocation(Sprite::shaderProgram, uniform_name);
-//                print_error();
-//                if (Sprite::uniform_projection == -1) {
-//                    std::cout << "Could not bind uniform " << uniform_name << std::endl;
-//                    exit(1);
-//                }
+                const char* uniform_name;
+                uniform_name = "modelview";
+                Sprite::uniform_modelview = glGetUniformLocation(Sprite::shaderProgram, uniform_name);
+                print_error();
+                if (Sprite::uniform_modelview == -1) {
+                    std::cout << "Could not bind uniform " << uniform_name << std::endl;
+                    exit(1);
+                }
+                
+                uniform_name = "projection";
+                Sprite::uniform_projection = glGetUniformLocation(Sprite::shaderProgram, uniform_name);
+                print_error();
+                if (Sprite::uniform_projection == -1) {
+                    std::cout << "Could not bind uniform " << uniform_name << std::endl;
+                    exit(1);
+                }
                 
                 glVertexAttribPointer(
                     Sprite::attribute_position, // attribute
@@ -162,7 +176,6 @@ void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &eve
 //                glDeleteBuffers(1, &vertexBufferObject);
             }
             
-            transform->transform = glm::mat4(1.f);
             glm::mat4 modelview = view * transform->transform;
 
             glUseProgram(Sprite::shaderProgram);
@@ -171,10 +184,10 @@ void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &eve
             print_error();
             glEnableVertexAttribArray(Sprite::attribute_position);
             print_error();
-//            glUniformMatrix4fv(Sprite::uniform_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
-//            print_error();
-//            glUniformMatrix4fv(Sprite::uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
-//            print_error();
+            glUniformMatrix4fv(Sprite::uniform_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
+            print_error();
+            glUniformMatrix4fv(Sprite::uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
+            print_error();
             glDrawArrays(GL_TRIANGLES, 0, 6);
             print_error();
             glDisableVertexAttribArray(Sprite::attribute_position);
@@ -236,12 +249,12 @@ GLuint RenderSystem::loadShaders()
     "precision mediump float;\n"
     "attribute vec3 vertexposition;\n"
     "\n"
-//    "uniform mat4 modelview;\n"
-//    "uniform mat4 projection;\n"
+    "uniform mat4 modelview;\n"
+    "uniform mat4 projection;\n"
     "\n"
     "void main () {\n"
-//    "    gl_Position = projection * modelview * vec4(vertexposition, 1.0);\n"
-    "    gl_Position = vec4(vertexposition, 1.0);\n"
+    "    gl_Position = projection * modelview * vec4(vertexposition, 1.0);\n"
+//    "    gl_Position = vec4(vertexposition, 1.0);\n"
     "}";
     
     // Read the Fragment Shader code from the file

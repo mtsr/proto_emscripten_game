@@ -20,6 +20,10 @@ struct Transform : public entityx::Component<Transform> {
     Transform() : transform(glm::mat4(1.f)) {};
     Transform(glm::mat4 transform) : transform(transform) {};
     
+    void translate(glm::vec3 translation) {
+        transform = glm::translate(transform, translation);
+    }
+    
     void scale(glm::vec3 scale) {
         transform = glm::scale(transform, scale);
     }
