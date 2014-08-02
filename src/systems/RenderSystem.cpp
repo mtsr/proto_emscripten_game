@@ -176,6 +176,8 @@ void RenderSystem::update(entityx::EntityManager &es, entityx::EventManager &eve
 //                glDeleteBuffers(1, &vertexBufferObject);
             }
             
+            transform->rotate(30*dt, glm::vec3(0.f, 0.f, 1.f));
+            
             glm::mat4 modelview = view * transform->transform;
 
             glUseProgram(Sprite::shaderProgram);
