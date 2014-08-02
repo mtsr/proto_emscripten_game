@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 2.6)
 
 if(EMSCRIPTEN)
 else(EMSCRIPTEN)
-# include(FindGLEW)
+include(FindGLEW)
+include(${GLEW_INCLUDE_DIR})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 endif()
@@ -66,6 +67,7 @@ set(components
   src/components/Body.h
   src/components/Camera.h
   src/components/Sprite.h
+  src/components/Sprite.cpp
   src/components/Transform.h
 )
 source_group(src\\components FILES ${components})
@@ -126,7 +128,7 @@ target_link_libraries(${APP_NAME}
 ELSE(EMSCRIPTEN)
 target_link_libraries(${APP_NAME}
 	/Users/jonasmatser/Development/SDL-emscripten/build/.libs/libSDL2.dylib
-	# ${GLEW_LIBRARY}
+	${GLEW_LIBRARY}
 	${OPENGL_LIBRARIES}
 	entityx
 )

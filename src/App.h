@@ -16,10 +16,10 @@
 #include <SDL/SDL_opengles2.h>
 #else
 // Because of conflict with glew
-//#define NO_SDL_GLEXT
-//#include <GL/glew.h>
+#define NO_SDL_GLEXT
+#include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+//#include <SDL/SDL_opengl.h>
 #endif
 
 #include <entityx/entityx.h>
@@ -39,6 +39,8 @@ class App : public entityx::Receiver<App> {
     
     const int FIXED_TIME_STEP_MS = 10;
     const int MAX_LOOPS = 10;
+    
+    entityx::Entity camera;
     
 public:
 #ifndef EMSCRIPTEN

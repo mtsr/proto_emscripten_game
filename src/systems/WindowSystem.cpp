@@ -10,7 +10,12 @@
 
 #include <iostream>
 
-WindowSystem::WindowSystem() : context(NULL), window(nullptr) {
+WindowSystem::WindowSystem() : window(nullptr), context(NULL) {
+    if (SDL_Init(0) != 0) {
+    	std::cout << "SDL could not initialize! SDL_Error:" << SDL_GetError() << std::endl;
+    	exit(1);
+    }
+
     int n = SDL_GetNumVideoDrivers();
     if (n == 0) {
         std::cout << "No built-in video drivers" << std::endl;
@@ -41,7 +46,7 @@ WindowSystem::WindowSystem() : context(NULL), window(nullptr) {
 #endif
     
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+//    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     
     window = SDL_CreateWindow(
                               "Crossplatform",
@@ -64,12 +69,25 @@ WindowSystem::WindowSystem() : context(NULL), window(nullptr) {
     	std::cout << "Context could not be created! SDL_Error:" << SDL_GetError() << std::endl;
     	exit(1);
     }
+
+#ifndef EMSCRIPTEN
+    glewExperimental=true;
+    GLenum status = glewInit();
+    // Throw away GL_INVALID_ENUM here
+    glGetError();
+    if (status != GLEW_OK)
+    {
+        std::cerr << "GLEW Error: " << glewGetErrorString(status) << "\n";
+//        print_error();
+        exit(1);
+    }
+#endif
     
     // get version info
     const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
     const GLubyte* version = glGetString(GL_VERSION); // version as a string
     std::cout << "Renderer: " << renderer << std::endl;
-    std::cout << "OpenGL version supported " << version << std::endl;
+    std::cout << "OpenGL version supported: " << version << std::endl;
 }
 
 void WindowSystem::configure(entityx::EventManager &event_manager) {

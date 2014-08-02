@@ -49,10 +49,13 @@ void App::run() {
     entityx::Entity first = entities.create();
     first.assign<Sprite>();
     first.assign<Transform>();
+    first.component<Transform>()->scale(glm::vec3(10.f, 10.f, 1.f));
     
-    entityx::Entity camera = entities.create();
+    camera = entities.create();
     camera.assign<Camera>();
     camera.component<Camera>()->mPosition = glm::vec3(0.f, 0.f, -10.f);
+    camera.component<Camera>()->mUp = glm::vec3(0.f, 1.f, 0.f);
+    camera.component<Camera>()->mLookAt = glm::vec3(0.f, 0.f, 0.f);
     
 #ifdef EMSCRIPTEN
     app = this;
@@ -74,10 +77,12 @@ void App::update() {
     while (accumulator_ms > FIXED_TIME_STEP_MS && ++count <= MAX_LOOPS) {
         accumulator_ms -= FIXED_TIME_STEP_MS;
         systems.update<EventSystem>(FIXED_TIME_STEP_MS / 1000.f);
+
         //        systems.update<InputSystem>(FIXED_TIME_STEP / 1000.f);
         //        systems.update<PhysicsSystem>(FIXED_TIME_STEP / 1000.f);
     }
     //    systems.update<InterpolationSystem>(accumulator_ms / 1000.f);
+    systems.update<RenderSystem>(delta_ms / 1000.f);
     systems.update<WindowSystem>(delta_ms / 1000.f);
 }
 
