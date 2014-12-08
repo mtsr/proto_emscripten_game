@@ -9,24 +9,17 @@
 #ifndef __CrossPlatform__RenderSystem__
 #define __CrossPlatform__RenderSystem__
 
-#ifdef EMSCRIPTEN
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengles2.h>
-#else
-// Because of conflict with glew
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-//#include <SDL/SDL_opengl.h>
-#endif
-
-#include <entityx/entityx.h>
+#include "../common.h"
 
 #include "../events/ResizeEvent.h"
 
+#include "../components/Camera.h"
+#include "../components/Transform.h"
+#include "../components/Sprite.h"
+
 class RenderSystem : public entityx::System<RenderSystem>, public entityx::Receiver<RenderSystem> {
     
-    GLint width, height;
+    GLint mWidth, mHeight;
     bool resized = true;
 public:
     RenderSystem();
@@ -37,9 +30,12 @@ public:
     
     void receive(const ResizeEvent &resizeEvent);
     
+    void draw(entityx::ComponentHandle<Sprite> sprite, entityx::ComponentHandle<Transform> transform, glm::mat4 view, glm::mat4 projection);
+    
 protected:
     void print_log(GLuint object);
     GLuint loadShaders();
+    GLuint loadTexture(const std::string filename);
 };
 
 #endif /* defined(__CrossPlatform__RenderSystem__) */

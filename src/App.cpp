@@ -10,11 +10,6 @@
 #include <stdlib.h>
 #include <iostream>
 
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#else
-#endif
-
 #include "systems/WindowSystem.h"
 #include "systems/EventSystem.h"
 #include "systems/RenderSystem.h"
@@ -50,7 +45,9 @@ void App::run() {
     first.assign<Sprite>();
     first.assign<Transform>();
 //    first.component<Transform>()->translate(glm::vec3(1.f, 1.f, 0.f));
-//    first.component<Transform>()->scale(glm::vec3(1.f, 1.f, 1.f));
+    first.component<Transform>()->scale(glm::vec3(50.f, 50.f, 50.f));
+    // TODO fix path
+    first.component<Sprite>()->textureFilename = "../../../resources/between_two_stars_by_MaksFray.png";
     
     camera = entities.create();
     camera.assign<Camera>();

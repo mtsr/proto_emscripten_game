@@ -9,22 +9,7 @@
 #ifndef __CrossPlatform__App__
 #define __CrossPlatform__App__
 
-#include <iostream>
-
-#ifdef EMSCRIPTEN
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengles2.h>
-#else
-// Because of conflict with glew
-#define NO_SDL_GLEXT
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-//#include <SDL/SDL_opengl.h>
-#endif
-
-#include <entityx/entityx.h>
-
-#include <glm/glm.hpp>
+#include "common.h"
 
 #include "events/QuitEvent.h"
 

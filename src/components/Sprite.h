@@ -9,22 +9,19 @@
 #ifndef __CrossPlatform__Sprite__
 #define __CrossPlatform__Sprite__
 
-#ifdef EMSCRIPTEN
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengles2.h>
-#else
-// Because of conflict with glew
-//#define NO_SDL_GLEXT
-//#include <GL/glew.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#endif
-
-#include <entityx/entityx.h>
+#include "../common.h"
 
 struct Sprite : public entityx::Component<Sprite> {
     static bool initialized;
-    static GLuint vertexBufferObject, shaderProgram, attribute_position, uniform_modelview, uniform_projection;
+    static GLuint vertexBufferObject, vertexBufferObject_texture_coordinates, indexBufferObject, shaderProgram, attribute_position, attribute_texture_coordinates, uniform_modelview, uniform_projection, uniform_texture;
+
+#ifndef EMSCRIPTEN
+    static GLuint vertexArrayObject;
+#endif
+    
+    std::string textureFilename = "";
+    GLuint texture;
+    bool textureLoaded = false;
 };
 
 #endif /* defined(__CrossPlatform__Sprite__) */
